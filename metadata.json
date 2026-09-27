@@ -1,0 +1,6 @@
+{
+  "name": "Python IDE",
+  "description": "A powerful mobile-first Python IDE with code editor, file manager, terminal, packages, and Git.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
