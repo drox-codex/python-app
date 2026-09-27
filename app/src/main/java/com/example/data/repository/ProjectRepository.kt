@@ -225,6 +225,66 @@ def calculate_stats(numbers):
             File(myProjectDir, "requirements.txt").writeText("requests>=2.31.0\nnumpy>=1.26.4\n")
             File(myProjectDir, "README.md").writeText("# MyProject\n\nبيئة تطوير بايثون كاملة على هاتفك مع محرر أكواد و Terminal و Git.\n")
 
+            val notebookJson = """{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# تحليل البيانات والرسوم البيانية (Data Analysis)\n",
+        "مرحباً بك في قارئ ومحرر دفاتر **Jupyter Notebook** على الهاتف المحمول!\n",
+        "يمكنك تشغيل كل خلية بشكل مستقل وفحص النتائج."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Dataset initialized with 5 samples\n",
+            "Total sales: 24,500\n"
+          ]
+        }
+      ],
+      "source": [
+        "sales = [1200, 3400, 4500, 6800, 8600]\n",
+        "print('Dataset initialized with', len(sales), 'samples')\n",
+        "print('Total sales:', sum(sales))"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {},
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Average quarterly revenue: 4900.0\n"
+          ]
+        }
+      ],
+      "source": [
+        "avg = sum(sales) / len(sales)\n",
+        "print('Average quarterly revenue:', avg)"
+      ]
+    }
+  ],
+  "metadata": {
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}"""
+            File(myProjectDir, "analysis.ipynb").writeText(notebookJson)
+
             // Create WebApp
             val webAppDir = File(projectsRoot, "WebApp").apply { mkdirs() }
             File(webAppDir, "app.py").writeText("print('WebApp server running on port 5000')\n")

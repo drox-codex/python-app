@@ -37,6 +37,7 @@ import com.example.ui.screens.EditorScreen
 import com.example.ui.screens.ExplorerScreen
 import com.example.ui.screens.GitScreen
 import com.example.ui.screens.HomeScreen
+import com.example.ui.screens.NotebookScreen
 import com.example.ui.screens.OutputScreen
 import com.example.ui.screens.PackagesScreen
 import com.example.ui.screens.SettingsScreen
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
                             is IdeScreen.Templates -> TemplatesScreen(ideViewModel)
                             is IdeScreen.Settings -> SettingsScreen(ideViewModel)
                             is IdeScreen.About -> AboutScreen(ideViewModel)
+                            is IdeScreen.Notebook -> NotebookScreen(ideViewModel)
                         }
 
                         // Floating Toast Message

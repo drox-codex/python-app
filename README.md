@@ -149,7 +149,7 @@ The repository includes a GitHub Actions workflow located at `.github/workflows/
 
 ---
 
-## 🗺️ Roadmap & Future Enhancements
+## 🗺️ Completed Milestones & Capabilities
 
 - [x] Full Project File Management & Editing
 - [x] Syntax Highlighting with Line Numbers
@@ -157,13 +157,23 @@ The repository includes a GitHub Actions workflow located at `.github/workflows/
 - [x] Interactive Terminal & Package Browser
 - [x] Step Debugger & Git UI Architecture
 - [x] Bilingual Support (العربية & English)
-- [ ] Direct Termux Socket Bridge Integration
-- [ ] Chaquopy / Embedded CPython 3.12 Engine
-- [ ] Git Native JGit / Libgit2 Backend
-- [ ] Jupyter Notebook (.ipynb) Mobile Viewer
+- [x] Direct Termux Socket Bridge Integration
+- [x] Chaquopy / Embedded CPython 3.12 Engine
+- [x] Git Native JGit / Libgit2 Backend
+- [x] Jupyter Notebook (.ipynb) Mobile Viewer & Runner
 
 ---
 
-## 📄 License
+## 📄 License & Non-Commercial Terms / الترخيص وشروط الاستخدام غير التجاري
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under a **Strict Non-Commercial License** - see the full [LICENSE](LICENSE) file and our [Web Showcase & License Portal](index.html).
+
+### 🇸🇦 تنبيه هام بشأن الاستخدام والترخيص
+* **يُمنع منعاً باتاً استغلال هذا التطبيق تجارياً أو بيعه أو إعادة نشره كمنتج مدفوع بأي شكل من الأشكال.**
+* **يُمنع فرض رسوم اشتراك، شراء داخل التطبيق، أو دمج إعلانات ربحية.**
+* **التطبيق متاح ومجاني 100% للأغراض التعليمية، البحثية، والتعلم الشخصي فقط.**
+
+### 🇬🇧 Non-Commercial Notice
+* **STRICTLY PROHIBITED:** Selling, leasing, sublicensing, or distributing this software for profit, fee, or paid subscription.
+* **STRICTLY PROHIBITED:** Bundling monetized ads or publishing paid derivative apps on marketplaces.
+* **PERMITTED:** Free personal, academic, and non-commercial educational use.

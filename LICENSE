@@ -1,0 +1,49 @@
+# Non-Commercial Strict License / اتفاقية الترخيص غير التجاري الصارم
+
+**Copyright (c) 2026 Python IDE Contributors**
+
+---
+
+## 🇸🇦 النسخة العربية (الترخيص الصارم غير التجاري)
+
+يُمنح بموجب هذا الترخيص أي شخص يحصل على نسخة من هذا البرنامج والملفات الوثائقية المرتبطة به ("البرنامج") الحق في استخدام التطبيق للأغراض الشخصية، التعليمية، والبحثية غير الهادفة للربح، وفقاً للشروط والقيود الصارمة التالية:
+
+### 1. الحظر التجاري الصارم (No Commercial Use or Monetization)
+* **يُمنع منعاً باتاً ومطلقاً** بيع هذا البرنامج أو أي جزء منه، أو ترخيصه بمقابل، أو تأجيره، أو توزيعه كمنتج مدفوع.
+* **يُمنع منعاً باتاً** دمج هذا البرنامج أو أي كود مصدري مشتق منه داخل أي تطبيق، برنامج، أو خدمة تفرض رسوم اشتراك، شراء داخل التطبيق (In-App Purchases)، أو أي وسيلة ربحية مباشرة أو غير مباشرة.
+* **يُمنع منعاً باتاً** إعادة نشر التطبيق على أي متجر تطبيقات (مثل Google Play Store، أو متجر خارجي) مع تفعيل إعلانات ربحية أو فرض رسوم تنزيل.
+* **يُمنع منعاً باتاً** استخدام هذا البرنامج أو أي جزء منه لتقديم خدمات تجارية مدفوعة للعملاء دون إذن خطي مسبق وصريح من المالك.
+
+### 2. الاستخدام المسموح (Permitted Uses)
+* يُسمح باستخدام التطبيق مجاناً وبلا أي رسوم للأغراض الشخصية فقط.
+* يُسمح باستخدام البرنامج في المدارس، الجامعات، المعاهد، والدورات التعليمية المجانية لتعليم لغة بايثون.
+* يُسمح بمراجعة الكود، والمساهمة في تطويره وتصحيح أخطائه في إطار غير تجاري.
+
+### 3. إشعار الملكية (Attribution)
+يجب إدراج إشعار حقوق النشر أعلاه وهذا الإشعار بالكامل في جميع النسخ أو الأجزاء الجوهرية من البرنامج.
+
+### 4. إخلاء المسؤولية (Disclaimer)
+يُقدم البرنامج "كما هو" (AS IS)، دون أي ضمان من أي نوع، صريحاً كان أو ضمنياً. لا يتحمل المطورون أي مسؤولية عن أي أضرار ناتجة عن استخدام البرنامج.
+
+---
+
+## 🇬🇧 English Version (Strict Non-Commercial License)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to use, copy, modify, and distribute the Software for **strictly non-commercial, personal, and educational purposes**, subject to the following conditions:
+
+### 1. Prohibition on Commercial Use and Monetization
+* **Under no circumstances** may the Software, or any derivative work, be sold, licensed, leased, sublicensed, or otherwise monetized.
+* **Under no circumstances** may the Software be distributed as a paid product, bundled with paid software, or integrated into a service that charges subscription fees, download fees, or in-app payments.
+* **Under no circumstances** may the Software or its derivatives be published on any application marketplace (e.g., Google Play Store or third-party stores) containing monetized advertisements or paywalls.
+* Any commercial exploitation, redistribution for profit, or commercial support offering based on this Software is strictly prohibited without prior written authorization from the copyright holder.
+
+### 2. Permitted Uses
+* Free personal use by individual developers, students, and hobbyists.
+* Free educational use in academic institutions, universities, non-profit coding bootcamps, and research facilities.
+* Open contribution and bug fixing strictly maintained under this non-commercial license.
+
+### 3. Attribution Requirement
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+### 4. Warranty Disclaimer
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

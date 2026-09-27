@@ -34,6 +34,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.data.execution.RuntimeEngineType
 import com.example.ui.components.AppBottomNavBar
 import com.example.ui.localization.AppLanguage
 import com.example.ui.theme.DarkBackground
@@ -82,6 +85,8 @@ fun SettingsScreen(viewModel: IdeViewModel) {
     var showLanguageDialog by remember { mutableStateOf(false) }
     var showFontSizeDialog by remember { mutableStateOf(false) }
     var showHelpDialog by remember { mutableStateOf(false) }
+    var showEngineDialog by remember { mutableStateOf(false) }
+    var showTermuxPortDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         bottomBar = { AppBottomNavBar(viewModel = viewModel, currentScreen = IdeScreen.Settings) },
@@ -171,17 +176,16 @@ fun SettingsScreen(viewModel: IdeViewModel) {
                         SettingsDivider()
                         SettingsRow(
                             icon = Icons.Filled.Code,
-                            title = viewModel.tr("interpreter_label"),
-                            subtitle = settings.pythonVersion,
-                            onClick = {
-                                viewModel.showMessage("Python Interpreter: 3.11.4")
-                            }
+                            title = "Python Runtime Engine",
+                            subtitle = settings.activeEngine.displayName,
+                            onClick = { showEngineDialog = true }
                         )
                         SettingsDivider()
                         SettingsRow(
                             icon = Icons.Filled.Terminal,
-                            title = viewModel.tr("termux_label"),
-                            subtitle = viewModel.tr("termux_status"),
+                            title = "Termux Direct Socket Bridge",
+                            subtitle = "${settings.termuxHost}:${settings.termuxPort} • ${if (settings.termuxIntegrationEnabled) "Active" else "Disabled"}",
+                            onClick = { showTermuxPortDialog = true },
                             showArrow = false,
                             trailing = {
                                 Switch(
@@ -195,6 +199,20 @@ fun SettingsScreen(viewModel: IdeViewModel) {
                                     )
                                 )
                             }
+                        )
+                        SettingsDivider()
+                        SettingsRow(
+                            icon = Icons.Filled.Folder,
+                            title = "Git Backend Core",
+                            subtitle = settings.gitBackend,
+                            onClick = { viewModel.showMessage("Git Core: Native Libgit2 / JGit Integration") }
+                        )
+                        SettingsDivider()
+                        SettingsRow(
+                            icon = Icons.Filled.Code,
+                            title = "Jupyter Notebook Support",
+                            subtitle = "Interactive .ipynb Mobile Runner & Kernel",
+                            onClick = { viewModel.showMessage("Jupyter Notebook: Kernel Ready") }
                         )
                     }
                 }
@@ -412,6 +430,109 @@ fun SettingsScreen(viewModel: IdeViewModel) {
                     colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
                 ) {
                     Text("OK")
+                }
+            },
+            containerColor = DarkSurfaceElevated
+        )
+    }
+
+    // Python Runtime Engine Dialog (Chaquopy, Termux Bridge, Built-in)
+    if (showEngineDialog) {
+        AlertDialog(
+            onDismissRequest = { showEngineDialog = false },
+            title = { Text("Select Python Execution Engine", color = TextPrimary) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    RuntimeEngineType.values().forEach { engine ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(if (engine == settings.activeEngine) PrimaryAccent.copy(alpha = 0.2f) else DarkSurface)
+                                .border(1.dp, if (engine == settings.activeEngine) PrimaryAccent else DarkBorder, RoundedCornerShape(10.dp))
+                                .clickable {
+                                    viewModel.setRuntimeEngine(engine)
+                                    showEngineDialog = false
+                                }
+                                .padding(14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = engine.displayName,
+                                    color = TextPrimary,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = engine.versionString,
+                                    color = TextMuted,
+                                    fontSize = 11.sp,
+                                    fontFamily = FontFamily.Monospace
+                                )
+                            }
+                            if (engine == settings.activeEngine) {
+                                Text("✓", color = PrimaryAccent, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showEngineDialog = false }) {
+                    Text("Close", color = PrimaryAccent)
+                }
+            },
+            containerColor = DarkSurfaceElevated
+        )
+    }
+
+    // Termux Socket Port Dialog
+    if (showTermuxPortDialog) {
+        var tempPort by remember { mutableStateOf(settings.termuxPort.toString()) }
+        AlertDialog(
+            onDismissRequest = { showTermuxPortDialog = false },
+            title = { Text("Termux Direct Socket Bridge", color = TextPrimary) },
+            text = {
+                Column {
+                    Text(
+                        text = "Configures direct TCP bridge to Termux runtime running on localhost (${settings.termuxHost}).",
+                        color = TextSecondary,
+                        fontSize = 12.sp
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    OutlinedTextField(
+                        value = tempPort,
+                        onValueChange = { tempPort = it },
+                        label = { Text("TCP Port (e.g. 8080 or 8022)") },
+                        singleLine = true,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = PrimaryAccent,
+                            unfocusedBorderColor = DarkBorder,
+                            focusedTextColor = TextPrimary,
+                            unfocusedTextColor = TextPrimary
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val p = tempPort.toIntOrNull() ?: 8080
+                        viewModel.setTermuxPort(p)
+                        showTermuxPortDialog = false
+                        viewModel.showMessage("Termux bridge configured to port $p")
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                ) {
+                    Text("Save")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTermuxPortDialog = false }) {
+                    Text("Cancel", color = TextSecondary)
                 }
             },
             containerColor = DarkSurfaceElevated

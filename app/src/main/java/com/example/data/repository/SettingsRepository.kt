@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import com.example.data.execution.RuntimeEngineType
 import com.example.data.model.AppSettings
 import com.example.ui.localization.AppLanguage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,5 +42,20 @@ class SettingsRepository {
 
     fun updateTermuxIntegration(enabled: Boolean) {
         _settings.value = _settings.value.copy(termuxIntegrationEnabled = enabled)
+    }
+
+    fun updateEngine(engine: RuntimeEngineType) {
+        _settings.value = _settings.value.copy(
+            activeEngine = engine,
+            pythonVersion = engine.versionString
+        )
+    }
+
+    fun updateTermuxPort(port: Int) {
+        _settings.value = _settings.value.copy(termuxPort = port)
+    }
+
+    fun updateGitBackend(backend: String) {
+        _settings.value = _settings.value.copy(gitBackend = backend)
     }
 }

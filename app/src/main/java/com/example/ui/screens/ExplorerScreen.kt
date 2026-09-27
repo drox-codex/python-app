@@ -283,6 +283,8 @@ fun ExplorerScreen(viewModel: IdeViewModel) {
                         onClick = {
                             if (file.isDirectory) {
                                 viewModel.loadDirectory(file.path)
+                            } else if (file.isJupyterNotebook) {
+                                viewModel.openNotebook(file.path)
                             } else {
                                 viewModel.openFile(file.path)
                                 viewModel.navigateTo(IdeScreen.Editor)
@@ -432,6 +434,21 @@ fun FileItemRow(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Folder,
+                        contentDescription = null,
+                        tint = PythonYellow,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            } else if (file.isJupyterNotebook) {
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(PythonYellow.copy(alpha = 0.2f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Description,
                         contentDescription = null,
                         tint = PythonYellow,
                         modifier = Modifier.size(22.dp)

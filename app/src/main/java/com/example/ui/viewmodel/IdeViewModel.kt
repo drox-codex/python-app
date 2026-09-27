@@ -4,13 +4,20 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.execution.BuiltinPythonRuntime
+import com.example.data.execution.ChaquopyEmbeddedRuntime
 import com.example.data.execution.PythonRuntime
+import com.example.data.execution.RuntimeEngineType
 import com.example.data.execution.TerminalLine
 import com.example.data.execution.TerminalSession
+import com.example.data.execution.TermuxSocketBridgeRuntime
 import com.example.data.model.AppSettings
+import com.example.data.model.CellType
 import com.example.data.model.DebuggerSession
 import com.example.data.model.DefaultTemplates
 import com.example.data.model.GitStatus
+import com.example.data.model.JupyterNotebook
+import com.example.data.model.JupyterNotebookParser
+import com.example.data.model.NotebookCell
 import com.example.data.model.PackageInfo
 import com.example.data.model.Project
 import com.example.data.model.ProjectFile
@@ -26,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.UUID
 
 sealed class IdeScreen {
     object Welcome : IdeScreen()
@@ -40,6 +48,7 @@ sealed class IdeScreen {
     object Templates : IdeScreen()
     object Settings : IdeScreen()
     object About : IdeScreen()
+    object Notebook : IdeScreen()
 }
 
 class IdeViewModel(application: Application) : AndroidViewModel(application) {
@@ -48,8 +57,8 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
     private val packageRepository = PackageManagerRepository()
     private val gitRepository = GitRepository()
     private val settingsRepository = SettingsRepository()
-    private val pythonRuntime: PythonRuntime = BuiltinPythonRuntime()
-    private val terminalSession = TerminalSession(projectRepository, packageRepository, pythonRuntime)
+    private val defaultRuntime: PythonRuntime = BuiltinPythonRuntime()
+    private val terminalSession = TerminalSession(projectRepository, packageRepository, defaultRuntime)
 
     // Navigation & Screen Stack
     private val _currentScreen = MutableStateFlow<IdeScreen>(IdeScreen.Welcome)
@@ -92,6 +101,10 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
     private val undoStack = mutableListOf<String>()
     private val redoStack = mutableListOf<String>()
 
+    // Jupyter Notebook State
+    private val _activeNotebook = MutableStateFlow<JupyterNotebook?>(null)
+    val activeNotebook: StateFlow<JupyterNotebook?> = _activeNotebook.asStateFlow()
+
     // Output & Execution
     private val _outputContent = MutableStateFlow<String>("")
     val outputContent: StateFlow<String> = _outputContent.asStateFlow()
@@ -109,6 +122,7 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
 
     // Git
     val gitStatus: StateFlow<GitStatus> = gitRepository.status
+    val gitEngineName: String = gitRepository.engineName
 
     // Debugger
     private val _debuggerSession = MutableStateFlow(DebuggerSession())
@@ -120,9 +134,19 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         refreshProjects()
-        // Automatically select first project as default active
         val defaultProj = _projects.value.firstOrNull { it.name == "MyProject" } ?: _projects.value.firstOrNull()
         defaultProj?.let { selectProject(it) }
+    }
+
+    fun getActiveRuntime(): PythonRuntime {
+        return when (settings.value.activeEngine) {
+            RuntimeEngineType.CHAQUOPY_EMBEDDED -> ChaquopyEmbeddedRuntime()
+            RuntimeEngineType.TERMUX_SOCKET_BRIDGE -> TermuxSocketBridgeRuntime(
+                host = settings.value.termuxHost,
+                port = settings.value.termuxPort
+            )
+            RuntimeEngineType.BUILTIN -> BuiltinPythonRuntime()
+        }
     }
 
     fun navigateTo(screen: IdeScreen) {
@@ -152,7 +176,6 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
         terminalSession.setWorkingDirectory(project.directoryPath)
         loadDirectory(project.directoryPath)
 
-        // If main.py or first py file exists, load it into editor
         val files = projectRepository.getFiles(project.directoryPath)
         val mainPy = files.firstOrNull { it.name == "main.py" } ?: files.firstOrNull { it.isPythonFile }
         if (mainPy != null) {
@@ -185,6 +208,10 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
     fun openFile(filePath: String) {
         val file = File(filePath)
         if (file.exists() && file.isFile) {
+            if (file.extension.equals("ipynb", ignoreCase = true)) {
+                openNotebook(filePath)
+                return
+            }
             _activeFilePath.value = filePath
             _activeFileName.value = file.name
             val text = projectRepository.readFile(filePath)
@@ -193,7 +220,99 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
             redoStack.clear()
             undoStack.add(text)
             updateCursorPos(1, 1)
+            navigateTo(IdeScreen.Editor)
         }
+    }
+
+    // Jupyter Notebook Support
+    fun openNotebook(filePath: String) {
+        val content = projectRepository.readFile(filePath)
+        val notebook = JupyterNotebookParser.parse(content, filePath)
+        _activeNotebook.value = notebook
+        navigateTo(IdeScreen.Notebook)
+    }
+
+    fun runNotebookCell(cell: NotebookCell) {
+        val current = _activeNotebook.value ?: return
+        val runtime = getActiveRuntime()
+
+        viewModelScope.launch {
+            val cellOutput = StringBuilder()
+            val nextCount = (current.cells.mapNotNull { it.executionCount }.maxOrNull() ?: 0) + 1
+
+            _activeNotebook.value = current.copy(
+                cells = current.cells.map {
+                    if (it.id == cell.id) it.copy(isExecuting = true) else it
+                }
+            )
+
+            runtime.execute(
+                scriptName = "cell.py",
+                code = cell.source,
+                inputProvider = { "Ahmed" },
+                onOutput = { text, _ ->
+                    if (!text.startsWith("[Running]") && !text.startsWith("[Done]")) {
+                        cellOutput.append(text)
+                    }
+                }
+            )
+
+            val updatedCells = current.cells.map {
+                if (it.id == cell.id) {
+                    it.copy(
+                        output = cellOutput.toString().trim(),
+                        isExecuting = false,
+                        executionCount = nextCount
+                    )
+                } else it
+            }
+
+            _activeNotebook.value = current.copy(cells = updatedCells)
+            saveCurrentNotebook()
+        }
+    }
+
+    fun runAllNotebookCells() {
+        val current = _activeNotebook.value ?: return
+        val codeCells = current.cells.filter { it.cellType == CellType.CODE }
+        viewModelScope.launch {
+            for (cell in codeCells) {
+                runNotebookCell(cell)
+            }
+        }
+    }
+
+    fun addNotebookCell(type: CellType) {
+        val current = _activeNotebook.value ?: return
+        val newCell = NotebookCell(
+            id = UUID.randomUUID().toString(),
+            cellType = type,
+            source = if (type == CellType.CODE) "print('New cell')" else "### New Section"
+        )
+        _activeNotebook.value = current.copy(cells = current.cells + newCell)
+        saveCurrentNotebook()
+    }
+
+    fun deleteNotebookCell(cellId: String) {
+        val current = _activeNotebook.value ?: return
+        _activeNotebook.value = current.copy(cells = current.cells.filter { it.id != cellId })
+        saveCurrentNotebook()
+    }
+
+    fun updateNotebookCellSource(cellId: String, newSource: String) {
+        val current = _activeNotebook.value ?: return
+        _activeNotebook.value = current.copy(
+            cells = current.cells.map {
+                if (it.id == cellId) it.copy(source = newSource) else it
+            }
+        )
+    }
+
+    fun saveCurrentNotebook() {
+        val current = _activeNotebook.value ?: return
+        val json = JupyterNotebookParser.serialize(current)
+        projectRepository.saveFile(current.filePath, json)
+        showMessage("تم حفظ دفتر Jupyter بنجاح")
     }
 
     fun updateEditorCode(newCode: String) {
@@ -288,20 +407,22 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // Run / Execution
+    // Run / Execution using active runtime
     fun runCurrentFile(interactiveInput: String? = null) {
         val scriptName = _activeFileName.value
         val codeToRun = _editorCode.value
+        val runtime = getActiveRuntime()
+
         _outputContent.value = ""
         _isExecuting.value = true
         navigateTo(IdeScreen.Output)
 
         viewModelScope.launch {
-            pythonRuntime.execute(
+            runtime.execute(
                 scriptName = scriptName,
                 code = codeToRun,
-                inputProvider = { prompt -> interactiveInput ?: "Ahmed" },
-                onOutput = { text, isError ->
+                inputProvider = { interactiveInput ?: "Ahmed" },
+                onOutput = { text, _ ->
                     _outputContent.value += text
                 }
             )
@@ -347,7 +468,7 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
     // Git
     fun gitCommit(message: String) {
         gitRepository.commit(message)
-        showMessage("تم تسجيل التغييرات: $message")
+        showMessage("تم تسجيل التغييرات عبر JGit: $message")
     }
 
     fun gitPush() {
@@ -368,6 +489,10 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
     fun gitCreateBranch(branch: String) {
         gitRepository.createBranch(branch)
         showMessage("تم إنشاء فرع $branch")
+    }
+
+    fun getGitDiff(fileName: String): String {
+        return gitRepository.getDiff(fileName)
     }
 
     // Debugger
@@ -430,6 +555,15 @@ class IdeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setTermuxIntegration(enabled: Boolean) {
         settingsRepository.updateTermuxIntegration(enabled)
+    }
+
+    fun setRuntimeEngine(engine: RuntimeEngineType) {
+        settingsRepository.updateEngine(engine)
+        showMessage("تم تفعيل: ${engine.displayName}")
+    }
+
+    fun setTermuxPort(port: Int) {
+        settingsRepository.updateTermuxPort(port)
     }
 
     fun showMessage(msg: String) {

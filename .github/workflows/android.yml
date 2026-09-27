@@ -35,14 +35,30 @@ jobs:
         with:
           cache-read-only: false
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Ensure Gradle Wrapper & Permissions
+        run: |
+          if [ -f "gradlew" ]; then
+            chmod +x gradlew
+          else
+            gradle wrapper || true
+            chmod +x gradlew || true
+          fi
 
       - name: Run Unit & Robolectric Tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+        run: |
+          if [ -x "./gradlew" ]; then
+            ./gradlew testDebugUnitTest --stacktrace
+          else
+            gradle testDebugUnitTest --stacktrace
+          fi
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          if [ -x "./gradlew" ]; then
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
 
       - name: Upload Test Reports
         if: always()

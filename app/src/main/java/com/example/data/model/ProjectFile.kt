@@ -18,6 +18,9 @@ data class ProjectFile(
     val isPythonFile: Boolean
         get() = extension.equals("py", ignoreCase = true)
 
+    val isJupyterNotebook: Boolean
+        get() = extension.equals("ipynb", ignoreCase = true)
+
     val isMarkdown: Boolean
         get() = extension.equals("md", ignoreCase = true)
 

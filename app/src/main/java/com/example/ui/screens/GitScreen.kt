@@ -60,6 +60,7 @@ import com.example.ui.theme.DarkBackground
 import com.example.ui.theme.DarkBorder
 import com.example.ui.theme.DarkSurface
 import com.example.ui.theme.DarkSurfaceElevated
+import com.example.ui.theme.ErrorRed
 import com.example.ui.theme.PrimaryAccent
 import com.example.ui.theme.RunGreen
 import com.example.ui.theme.SecondaryAccent
@@ -82,6 +83,7 @@ fun GitScreen(viewModel: IdeViewModel) {
     var showCloneDialog by remember { mutableStateOf(false) }
     var cloneUrl by remember { mutableStateOf("") }
     var showBranchDialog by remember { mutableStateOf(false) }
+    var selectedDiffFile by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         bottomBar = { AppBottomNavBar(viewModel = viewModel, currentScreen = IdeScreen.Home) },
@@ -174,6 +176,47 @@ fun GitScreen(viewModel: IdeViewModel) {
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(6.dp))
+                                .background(PrimaryAccent.copy(alpha = 0.15f))
+                                .padding(horizontal = 8.dp, vertical = 3.dp)
+                        ) {
+                            Text(
+                                text = "Git Engine: ${viewModel.gitEngineName}",
+                                color = PrimaryAccent,
+                                fontSize = 11.sp,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+
+                        if (gitStatus.uncommittedFiles.isNotEmpty()) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "Modified Files (Tap to view diff):",
+                                color = TextSecondary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            gitStatus.uncommittedFiles.forEach { file ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(DarkSurfaceElevated)
+                                        .clickable { selectedDiffFile = file.substringBefore(" ") }
+                                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(file, color = WarningOrange, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                                    Text("Diff", color = PrimaryAccent, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                            }
+                        }
                     }
                 }
 
@@ -369,6 +412,51 @@ fun GitScreen(viewModel: IdeViewModel) {
             confirmButton = {
                 TextButton(onClick = { showBranchDialog = false }) {
                     Text("Close", color = PrimaryAccent)
+                }
+            },
+            containerColor = DarkSurfaceElevated
+        )
+    }
+
+    // Code Diff Dialog
+    selectedDiffFile?.let { fileName ->
+        val diffText = viewModel.getGitDiff(fileName)
+        AlertDialog(
+            onDismissRequest = { selectedDiffFile = null },
+            title = {
+                Text("Git Diff: $fileName", color = TextPrimary, fontSize = 16.sp, fontFamily = FontFamily.Monospace)
+            },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(DarkBackground)
+                        .padding(10.dp)
+                ) {
+                    diffText.lines().forEach { line ->
+                        val color = when {
+                            line.startsWith("+") -> RunGreen
+                            line.startsWith("-") -> ErrorRed
+                            line.startsWith("@@") -> PrimaryAccent
+                            else -> TextSecondary
+                        }
+                        Text(
+                            text = line,
+                            color = color,
+                            fontSize = 11.sp,
+                            fontFamily = FontFamily.Monospace,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { selectedDiffFile = null },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                ) {
+                    Text("Close")
                 }
             },
             containerColor = DarkSurfaceElevated

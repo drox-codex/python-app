@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python IDE for Android — بيئة تطوير بايثون المتكاملة</title>
+  <meta name="description" content="بيئة تطوير بايثون كاملة واحترافية لهواتف أندرويد مع محرر أكواد، محطة أوامر، إدارة حزم Pip، ومصحح أخطاء.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070A12;
+      --bg-surface: #0E1424;
+      --bg-card: #141C32;
+      --bg-elevated: #1B2644;
+      --border: #223154;
+      --border-highlight: #334878;
+      --primary: #3B82F6;
+      --primary-hover: #2563EB;
+      --python-blue: #387EB8;
+      --python-yellow: #FFD43B;
+      --green: #10B981;
+      --purple: #A855F7;
+      --red: #EF4444;
+      --orange: #F59E0B;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --font-ar: 'Tajawal', sans-serif;
+      --font-en: 'Inter', sans-serif;
+      --font-code: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ar);
+      line-height: 1.6;
+      overflow-x: hidden;
+      selection-background-color: var(--primary);
+    }
+
+    body.lang-en {
+      font-family: var(--font-en);
+      direction: ltr;
+    }
+
+    /* Ambient Glow Background */
+    .glow-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .glow-circle-1 {
+      position: absolute;
+      top: -20%;
+      right: 10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(7, 10, 18, 0) 70%);
+      border-radius: 50%;
+    }
+    .glow-circle-2 {
+      position: absolute;
+      top: 40%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 212, 59, 0.08) 0%, rgba(7, 10, 18, 0) 70%);
+      border-radius: 50%;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(14, 20, 36, 0.85);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .brand svg {
+      width: 36px;
+      height: 36px;
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-highlight);
+    }
+    .btn-danger-outline {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger-outline:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .lang-btn {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .lang-btn:hover {
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding-top: 3rem;
+      }
+      .hero-actions {
+        justify-content: center;
+      }
+      .nav-links {
+        display: none;
+      }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 999px;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      line-height: 1.15;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      letter-spacing: -1px;
+    }
+    .hero h1 span.gradient {
+      background: linear-gradient(135deg, #60A5FA 0%, #FFD43B 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Mockup Frame */
+    .mockup-container {
+      position: relative;
+    }
+    .mockup-window {
+      background: #0B0F19;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    .mockup-topbar {
+      background: var(--bg-surface);
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .mockup-code {
+      padding: 1.25rem;
+      font-family: var(--font-code);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      direction: ltr;
+      text-align: left;
+    }
+    .kw { color: #FF79C6; }
+    .fn { color: #50FA7B; }
+    .str { color: #F1FA8C; }
+    .com { color: #6272A4; }
+    .num { color: #BD93F9; }
+    .builtin { color: #8BE9FD; }
+
+    .mockup-terminal {
+      background: #06080F;
+      border-top: 1px solid var(--border);
+      padding: 0.85rem 1.25rem;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      direction: ltr;
+      text-align: left;
+      color: #4ADE80;
+    }
+
+    /* Section Global */
+    section {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 3.5rem;
+    }
+    .section-tag {
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      letter-spacing: -0.5px;
+    }
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: all 0.25s ease;
+    }
+    .feature-card:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(0,0,0,0.5);
+    }
+    .feature-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      background: rgba(59, 130, 246, 0.12);
+      color: var(--primary);
+    }
+    .feature-icon-wrapper.green { background: rgba(16, 185, 129, 0.12); color: var(--green); }
+    .feature-icon-wrapper.purple { background: rgba(168, 85, 247, 0.12); color: var(--purple); }
+    .feature-icon-wrapper.yellow { background: rgba(255, 212, 59, 0.12); color: var(--python-yellow); }
+    .feature-icon-wrapper.orange { background: rgba(245, 158, 11, 0.12); color: var(--orange); }
+    .feature-icon-wrapper.red { background: rgba(239, 68, 68, 0.12); color: var(--red); }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .feature-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Interactive Live Demo */
+    .demo-wrapper {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 800px) {
+      .demo-wrapper { grid-template-columns: 1fr; }
+    }
+    .demo-editor {
+      padding: 1.5rem;
+      background: #0B0F19;
+      border-left: 1px solid var(--border);
+    }
+    .demo-output-panel {
+      padding: 1.5rem;
+      background: #06080F;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* License Section (High Priority) */
+    .license-container {
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.04) 0%, rgba(20, 28, 50, 0.8) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 20px;
+      padding: 2.5rem;
+      position: relative;
+    }
+    .license-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 999px;
+      color: #F87171;
+      font-weight: 700;
+      font-size: 0.88rem;
+      margin-bottom: 1.5rem;
+    }
+    .license-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .license-summary {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 800px;
+    }
+    .prohibitions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .prohibition-box {
+      background: rgba(14, 20, 36, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .prohibition-box.deny {
+      border-top: 3px solid var(--red);
+    }
+    .prohibition-box.allow {
+      border-top: 3px solid var(--green);
+    }
+    .box-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+    .box-header.deny { color: var(--red); }
+    .box-header.allow { color: var(--green); }
+    .box-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .license-code-block {
+      background: #070A12;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      font-family: var(--font-code);
+      font-size: 0.85rem;
+      color: #CBD5E1;
+      overflow-x: auto;
+      max-height: 250px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    /* Utilities */
+    .icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="glow-bg">
+    <div class="glow-circle-1"></div>
+    <div class="glow-circle-2"></div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <!-- Python Logo SVG -->
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#387EB8" d="M59.4,12 C44.5,12 45.4,18.4 45.4,18.4 L45.4,26.2 L59.7,26.2 L59.7,28.2 L35.5,28.2 C35.5,28.2 24.1,26.9 24.1,42.4 C24.1,57.9 33.9,57.1 33.9,57.1 L39.7,57.1 L39.7,48.9 C39.7,39.5 48.1,39.8 48.1,39.8 L62.3,39.8 C71.9,39.8 71.9,30.7 71.9,30.7 L71.9,23.3 C71.9,13.6 59.4,12 59.4,12 Z M51.6,18.8 C53.5,18.8 55.1,20.4 55.1,22.3 C55.1,24.2 53.5,25.8 51.6,25.8 C49.7,25.8 48.1,24.2 48.1,22.3 C48.1,20.4 49.7,18.8 51.6,18.8 Z"/>
+          <path fill="#FFD43B" d="M60.6,108 C75.5,108 74.6,101.6 74.6,101.6 L74.6,93.8 L60.3,93.8 L60.3,91.8 L84.5,91.8 C84.5,91.8 95.9,93.1 95.9,77.6 C95.9,62.1 86.1,62.9 86.1,62.9 L80.3,62.9 L80.3,71.1 C80.3,80.5 71.9,80.2 71.9,80.2 L57.7,80.2 C48.1,80.2 48.1,89.3 48.1,89.3 L48.1,96.7 C48.1,106.4 60.6,108 60.6,108 Z M68.4,101.2 C66.5,101.2 64.9,99.6 64.9,97.7 C64.9,95.8 66.5,94.2 68.4,94.2 C70.3,94.2 71.9,95.8 71.9,97.7 C71.9,99.6 70.3,101.2 68.4,101.2 Z"/>
+        </svg>
+        <span class="brand-title">Python IDE</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features" data-i18n="nav_features">المميزات</a></li>
+        <li><a href="#demo" data-i18n="nav_demo">تجربة حية</a></li>
+        <li><a href="#license" data-i18n="nav_license">الترخيص الصارم</a></li>
+        <li><a href="#about" data-i18n="nav_about">عن التطبيق</a></li>
+      </ul>
+
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <button id="langToggle" class="lang-btn">English</button>
+        <a href="#license" class="btn btn-danger-outline" style="font-size: 0.85rem;" data-i18n="btn_license_short">🚫 رخصة غير ربحية</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span>⚡</span>
+        <span data-i18n="hero_badge">تطبيق أندرويد متكامل • Jetpack Compose</span>
+      </div>
+      <h1 data-i18n="hero_title">
+        بيئة بايثون متكاملة <br>
+        <span class="gradient">بين يديك على هاتفك</span>
+      </h1>
+      <p class="hero-desc" data-i18n="hero_desc">
+        محرر أكواد حقيقي، محطة أوامر تفاعلية، مدير حزم Pip، تحكم في الإصدارات مع Git، ومصحح أخطاء—كل ذلك بتصميم داكن فائق السرعة والأناقة مبني خصيصاً لهواتف أندرويد.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#features" class="btn btn-primary" data-i18n="btn_explore">استكشف القدرات</a>
+        <a href="#license" class="btn btn-secondary" data-i18n="btn_view_license">شروط الاستخدام والترخيص</a>
+      </div>
+    </div>
+
+    <!-- Live Code Preview Mockup -->
+    <div class="mockup-container">
+      <div class="mockup-window">
+        <div class="mockup-topbar">
+          <div class="mockup-dots">
+            <span class="mockup-dot dot-red"></span>
+            <span class="mockup-dot dot-yellow"></span>
+            <span class="mockup-dot dot-green"></span>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-code);">main.py — Python 3.11.4</span>
+          <span style="font-size: 0.75rem; color: var(--green); font-weight: bold;">● Active</span>
+        </div>
+        <div class="mockup-code">
+          <span class="com"># برنامج بايثون ذكي على الأندرويد</span><br>
+          <span class="kw">import</span> <span class="builtin">math</span><br><br>
+          <span class="kw">def</span> <span class="fn">calculate_pi_power</span>(n):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> [math.pow(math.pi, i) <span class="kw">for</span> i <span class="kw">in</span> <span class="builtin">range</span>(n)]<br><br>
+          name = <span class="builtin">input</span>(<span class="str">"ما اسمك؟ "</span>)<br>
+          <span class="builtin">print</span>(<span class="str">f"مرحباً {name}! مرحباً بك في Python IDE"</span>)<br><br>
+          <span class="kw">for</span> idx, val <span class="kw">in</span> <span class="builtin">enumerate</span>(calculate_pi_power(<span class="num">3</span>)):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="builtin">print</span>(<span class="str">f"π^{idx} = {val:.4f}"</span>)
+        </div>
+        <div class="mockup-terminal">
+          [Running] python main.py<br>
+          ما اسمك؟ Ahmed<br>
+          مرحباً Ahmed! مرحباً بك في Python IDE<br>
+          π^0 = 1.0000<br>
+          π^1 = 3.1416<br>
+          π^2 = 9.8696<br>
+          [Done] exited with code 0 in 14ms
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Features Section -->
+  <section id="features">
+    <div class="section-header">
+      <div class="section-tag" data-i18n="tag_capabilities">قدرات المطورين</div>
+      <h2 class="section-title" data-i18n="title_features">كل ما تحتاجه للبرمجة أينما كنت</h2>
+      <p class="section-subtitle" data-i18n="subtitle_features">تمت هندسة التطبيق ليكون بيئة إنتاجية حقيقية تتجاوز محررات النصوص البسيطة.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- 1. Code Editor -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f1_title">محرر أكواد متقدم</h3>
+        <p class="feature-desc" data-i18n="f1_desc">تلوين صيغ بايثون كامل، أرقام الأسطر، تراجع وإعادة، بحث واستبدال، وشريط إدخال سريع للأقواس والمسافات والرموز.</p>
+      </div>
+
+      <!-- 2. Terminal -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper green">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zm-2-1h-6v-2h6v2zM7.5 17l-1.4-1.4 3.6-3.6-3.6-3.6L7.5 7l5 5-5 5z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f2_title">محطة أوامر (Terminal)</h3>
+        <p class="feature-desc" data-i18n="f2_desc">شاشة سطر أوامر مدمجة بخط Monospace لتنفيذ أوامر Python و Pip وإدارة الملفات وجاهزة للتوصيل بـ Termux.</p>
+      </div>
+
+      <!-- 3. Package Manager -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper purple">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm6 12H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V18z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f3_title">إدارة حزم Pip</h3>
+        <p class="feature-desc" data-i18n="f3_desc">استعراض وتثبيت أشهر مكتبات بايثون (Requests, NumPy, Pandas, Flask) بضغطة زر واحدة مع تتبع الإصدارات.</p>
+      </div>
+
+      <!-- 4. Git Integration -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper orange">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M17 12V3h-2v9h2zm-4 4V3h-2v13h2zm-4 4V3H7v17h2z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f4_title">إدارة الإصدارات (Git)</h3>
+        <p class="feature-desc" data-i18n="f4_desc">متابعة التغييرات غير المسجلة، فروع المستودع، تسجيل التعديلات (Commit)، والمزامنة السحابية مع GitHub.</p>
+      </div>
+
+      <!-- 5. Debugger -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper red">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M19 8h-1.81c-.45-.78-1.07-1.45-1.82-1.96L17 4.41 15.59 3l-2.17 2.17C12.96 5.06 12.49 5 12 5c-.49 0-.96.06-1.41.17L8.41 3 7 4.41l1.62 1.63C7.88 6.55 7.26 7.22 6.81 8H5v2h1.09c-.05.33-.09.66-.09 1v1H5v2h1v1c0 .34.04.67.09 1H5v2h1.81c1.04 1.79 2.97 3 5.19 3s4.15-1.21 5.19-3H19v-2h-1.09c.05-.33.09-.66.09-1v-1h1v-2h-1v-1c0-.34-.04-.67-.09-1H19V8zm-6 8h-2v-2h2v2zm0-4h-2V9h2v3z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f5_title">فاحص الأخطاء والمتغيرات</h3>
+        <p class="feature-desc" data-i18n="f5_desc">فحص المتغيرات وقيمها وأنواعها في الذاكرة لحظياً مع دعم نقاط التوقف (Breakpoints) والتقدم خطوة بخطوة.</p>
+      </div>
+
+      <!-- 6. Real Storage -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper yellow">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f6_title">نظام ملفات حقيقي</h3>
+        <p class="feature-desc" data-i18n="f6_desc">مشاريع وملفات حقيقية مخزنة على ذاكرة الأندرويد، مع إمكانية استيراد وتصدير مشاريعك بدون قيود مخفية.</p>
+      </div>
+
+      <!-- 7. Chaquopy / Embedded CPython 3.12 Engine -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper purple">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f7_title">محرك CPython 3.12 المدمج (Chaquopy)</h3>
+        <p class="feature-desc" data-i18n="f7_desc">تشغيل كود بايثون 3.12 الأصلي مباشرة داخل الأندرويد مع أداء فائق وتكامل عميق مع مكتبات C-Extensions.</p>
+      </div>
+
+      <!-- 8. Direct Termux Socket Bridge -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper green">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16v12H4zM2 4v16h20V4H2zm4 4l4 4-4 4 1.4 1.4L12.8 12 7.4 6.6 6 8zm7 7h5v2h-5z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f8_title">جسر المقابس المباشر مع Termux</h3>
+        <p class="feature-desc" data-i18n="f8_desc">ربط سداسي مباشر عبر Socket TCP مع بيئة Termux Linux لتنفيذ أي أوامر نظام وتثبيت حزم بايثون المتقدمة.</p>
+      </div>
+
+      <!-- 9. Git Native JGit / Libgit2 Backend -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper orange">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f9_title">محرك Git الأصلي (JGit & Libgit2)</h3>
+        <p class="feature-desc" data-i18n="f9_desc">إدارة مستودعات حقيقية مع تهيئة .git وفحص الفروقات البرمجية (Diff Viewer) وإنشاء الفروع وسجل التغييرات الكامل.</p>
+      </div>
+
+      <!-- 10. Jupyter Notebook (.ipynb) Mobile Viewer -->
+      <div class="feature-card">
+        <div class="feature-icon-wrapper yellow">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </div>
+        <h3 class="feature-title" data-i18n="f10_title">قارئ ومشغل دفاتر Jupyter (.ipynb)</h3>
+        <p class="feature-desc" data-i18n="f10_desc">استعراض وتشغيل ملفات Jupyter Notebook بمرونة، مع تنفيذ الخلايا البرمجية المستقلة وتحرير نصوص Markdown.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Live Demo Section -->
+  <section id="demo">
+    <div class="section-header">
+      <div class="section-tag" data-i18n="tag_demo">محاكاة فورية</div>
+      <h2 class="section-title" data-i18n="title_demo">جرب بيئة التشغيل مباشرة</h2>
+      <p class="section-subtitle" data-i18n="subtitle_demo">يمكنك تجربة طريقة تنفيذ الأوامر ومعالجة مخرجات بايثون التفاعلية.</p>
+    </div>
+
+    <div class="demo-wrapper">
+      <div class="demo-editor">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-family: var(--font-code); color: var(--text-muted); font-size: 0.85rem;">demo.py</span>
+          <button id="runBtn" class="btn btn-primary" style="padding: 0.35rem 0.85rem; font-size: 0.85rem;" data-i18n="btn_run">▶ تشغيل الكود</button>
+        </div>
+        <pre style="font-family: var(--font-code); font-size: 0.85rem; line-height: 1.6; direction: ltr; text-align: left; color: #CBD5E1;">
+<span class="com"># تجربة تشغيل كود بايثون</span>
+<span class="kw">def</span> <span class="fn">greeting</span>(user):
+    <span class="kw">return</span> <span class="str">f"مرحباً بك يا {user} في عالم بايثون!"</span>
+
+target = <span class="str">"المبرمج العربي"</span>
+<span class="builtin">print</span>(greeting(target))
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="builtin">range</span>(<span class="num">1</span>, <span class="num">4</span>):
+    <span class="builtin">print</span>(<span class="str">f"-> تنفيذ الخطوة البرمجية: {i}"</span>)
+        </pre>
+      </div>
+
+      <div class="demo-output-panel">
+        <div>
+          <div style="color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-code); margin-bottom: 0.75rem;">CONSOL / OUTPUT:</div>
+          <div id="demoOutput" style="font-family: var(--font-code); font-size: 0.85rem; direction: ltr; text-align: left; color: #4ADE80; line-height: 1.5;">
+            [Ready] Press "Run Code" to execute...
+          </div>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-dim); text-align: right; margin-top: 1rem;">
+          محرك بايثون خفيف مدمج داخل التطبيق
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Strict Non-Commercial License Section -->
+  <section id="license">
+    <div class="license-container">
+      <div class="license-badge">
+        <span>⚖️</span>
+        <span data-i18n="license_badge">ترخيص صارم غير تجاري • Strict Non-Commercial License</span>
+      </div>
+
+      <h2 class="license-title" data-i18n="license_heading">حظر الاستخدام التجاري والربحي</h2>
+      <p class="license-summary" data-i18n="license_summary">
+        تم نشر هذا المشروع كأداة تعليمية وتطويرية مجانية لجميع المستخدمين. <strong>يُمنع منعاً باتاً استغلال هذا التطبيق أو كوده المصدري كمنتج مدفوع، أو بيعه، أو تضمين إعلانات تجارية، أو الربح منه بأي شكل من الأشكال.</strong>
+      </p>
+
+      <!-- Prohibitions Grid -->
+      <div class="prohibitions-grid">
+        <div class="prohibition-box deny">
+          <div class="box-header deny">
+            <span>🚫</span>
+            <span data-i18n="rule_no_sale_title">حظر البيع وإعادة التوزيع بمقابل</span>
+          </div>
+          <p class="box-desc" data-i18n="rule_no_sale_desc">
+            يُحظر بيع التطبيق أو نسخه أو حزم APK المشتقة منه بأي مقابل مالي أو جعله تطبيقاً مدفوعاً على أي متجر.
+          </p>
+        </div>
+
+        <div class="prohibition-box deny">
+          <div class="box-header deny">
+            <span>🚫</span>
+            <span data-i18n="rule_no_ads_title">حظر الإعلانات والاشتراكات الربحية</span>
+          </div>
+          <p class="box-desc" data-i18n="rule_no_ads_desc">
+            يُحظر دمج أي شبكات إعلانية ربحية (AdMob أو غيرها)، أو تفعيل اشتراكات مدفوعة أو مشتريات داخل التطبيق.
+          </p>
+        </div>
+
+        <div class="prohibition-box deny">
+          <div class="box-header deny">
+            <span>🚫</span>
+            <span data-i18n="rule_no_commercial_service_title">حظر الخدمات التجارية المدفوعة</span>
+          </div>
+          <p class="box-desc" data-i18n="rule_no_commercial_service_desc">
+            لا يجوز لأي جهة تجارية استغلال التطبيق لتقديم خدمات استشارية أو دعم مدفوع دون إذن خطي صريح.
+          </p>
+        </div>
+
+        <div class="prohibition-box allow">
+          <div class="box-header allow">
+            <span>✅</span>
+            <span data-i18n="rule_allow_edu_title">مسموح ومجاني بالكامل للأغراض التعليمية</span>
+          </div>
+          <p class="box-desc" data-i18n="rule_allow_edu_desc">
+            يُسمح بحرية كاملة للطلاب، المعلمين، الجامعات، والمطورين الهواة بالاستخدام الشخصي والتعليمي غير الربحي.
+          </p>
+        </div>
+      </div>
+
+      <!-- Legal License Code Excerpt -->
+      <div class="license-code-block">
+        <strong>LEGAL CLAUSE: NON-COMMERCIAL RESTRICTION</strong><br><br>
+        1. NO MONETIZATION: Neither the Software nor any derivative work may be sold, licensed, leased, sublicensed, or distributed for pecuniary gain, fee, or subscription.<br>
+        2. NO PAYWALLS: Distribution of this application via marketplaces with paywalls, monetized advertisements, or in-app billing is strictly prohibited.<br>
+        3. PERMITTED USE: Non-commercial educational usage, academic study, and personal hobbyist development are granted free of charge in perpetuity.
+      </div>
+
+      <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+        <a href="LICENSE" download class="btn btn-secondary" style="font-size: 0.9rem;" data-i18n="btn_download_license">تحميل وثيقة الترخيص (LICENSE)</a>
+        <span style="color: var(--text-dim); font-size: 0.85rem;" data-i18n="license_note">يحفظ المطورون حقوق الملاحقة القانونية عند أي خرق للشروط التجارية.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About / Vision Section -->
+  <section id="about">
+    <div class="section-header">
+      <div class="section-tag" data-i18n="tag_about">الرؤية والمستقبل</div>
+      <h2 class="section-title" data-i18n="title_about">معاً نبني مستقبل البرمجة المتنقلة</h2>
+      <p class="section-subtitle" data-i18n="subtitle_about">
+        صُمم تطبيق Python IDE ليكون الأداة التي يمكن لأي مبرمج وطالب الاعتماد عليها أينما كان دون الحاجة إلى حاسوب محمول ثقيل.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; align-items: center;">
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <span style="font-weight: 700; color: #fff;">Python IDE for Android</span>
+        <span>•</span>
+        <span data-i18n="footer_license">مرخص للاستخدام غير التجاري فقط</span>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-dim);">
+        Made with Kotlin, Jetpack Compose and modern developer tooling. Copyright © 2026. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Bilingual Localization Dictionary
+    const translations = {
+      ar: {
+        nav_features: "المميزات",
+        nav_demo: "تجربة حية",
+        nav_license: "الترخيص الصارم",
+        nav_about: "عن التطبيق",
+        btn_license_short: "🚫 رخصة غير ربحية",
+        hero_badge: "تطبيق أندرويد متكامل • Jetpack Compose",
+        hero_title: "بيئة بايثون متكاملة <br><span class='gradient'>بين يديك على هاتفك</span>",
+        hero_desc: "محرر أكواد حقيقي، محطة أوامر تفاعلية، مدير حزم Pip، تحكم في الإصدارات مع Git، ومصحح أخطاء—كل ذلك بتصميم داكن فائق السرعة والأناقة مبني خصيصاً لهواتف أندرويد.",
+        btn_explore: "استكشف القدرات",
+        btn_view_license: "شروط الاستخدام والترخيص",
+        tag_capabilities: "قدرات المطورين",
+        title_features: "كل ما تحتاجه للبرمجة أينما كنت",
+        subtitle_features: "تمت هندسة التطبيق ليكون بيئة إنتاجية حقيقية تتجاوز محررات النصوص البسيطة.",
+        f1_title: "محرر أكواد متقدم",
+        f1_desc: "تلوين صيغ بايثون كامل، أرقام الأسطر، تراجع وإعادة، بحث واستبدال، وشريط إدخال سريع للأقواس والمسافات والرموز.",
+        f2_title: "محطة أوامر (Terminal)",
+        f2_desc: "شاشة سطر أوامر مدمجة بخط Monospace لتنفيذ أوامر Python و Pip وإدارة الملفات وجاهزة للتوصيل بـ Termux.",
+        f3_title: "إدارة حزم Pip",
+        f3_desc: "استعراض وتثبيت أشهر مكتبات بايثون (Requests, NumPy, Pandas, Flask) بضغطة زر واحدة مع تتبع الإصدارات.",
+        f4_title: "إدارة الإصدارات (Git)",
+        f4_desc: "متابعة التغييرات غير المسجلة، فروع المستودع، تسجيل التعديلات (Commit)، والمزامنة السحابية مع GitHub.",
+        f5_title: "فاحص الأخطاء والمتغيرات",
+        f5_desc: "فحص المتغيرات وقيمها وأنواعها في الذاكرة لحظياً مع دعم نقاط التوقف (Breakpoints) والتقدم خطوة بخطوة.",
+        f6_title: "نظام ملفات حقيقي",
+        f6_desc: "مشاريع وملفات حقيقية مخزنة على ذاكرة الأندرويد، مع إمكانية استيراد وتصدير مشاريعك بدون قيود مخفية.",
+        f7_title: "محرك CPython 3.12 المدمج (Chaquopy)",
+        f7_desc: "تشغيل كود بايثون 3.12 الأصلي مباشرة داخل الأندرويد مع أداء فائق وتكامل عميق مع مكتبات C-Extensions.",
+        f8_title: "جسر المقابس المباشر مع Termux",
+        f8_desc: "ربط سداسي مباشر عبر Socket TCP مع بيئة Termux Linux لتنفيذ أي أوامر نظام وتثبيت حزم بايثون المتقدمة.",
+        f9_title: "محرك Git الأصلي (JGit & Libgit2)",
+        f9_desc: "إدارة مستودعات حقيقية مع تهيئة .git وفحص الفروقات البرمجية (Diff Viewer) وإنشاء الفروع وسجل التغييرات الكامل.",
+        f10_title: "قارئ ومشغل دفاتر Jupyter (.ipynb)",
+        f10_desc: "استعراض وتشغيل ملفات Jupyter Notebook بمرونة، مع تنفيذ الخلايا البرمجية المستقلة وتحرير نصوص Markdown.",
+        tag_demo: "محاكاة فورية",
+        title_demo: "جرب بيئة التشغيل مباشرة",
+        subtitle_demo: "يمكنك تجربة طريقة تنفيذ الأوامر ومعالجة مخرجات بايثون التفاعلية.",
+        btn_run: "▶ تشغيل الكود",
+        license_badge: "ترخيص صارم غير تجاري • Strict Non-Commercial License",
+        license_heading: "حظر الاستخدام التجاري والربحي",
+        license_summary: "تم نشر هذا المشروع كأداة تعليمية وتطويرية مجانية لجميع المستخدمين. يُمنع منعاً باتاً استغلال هذا التطبيق أو كوده المصدري كمنتج مدفوع، أو بيعه، أو تضمين إعلانات تجارية، أو الربح منه بأي شكل من الأشكال.",
+        rule_no_sale_title: "حظر البيع وإعادة التوزيع بمقابل",
+        rule_no_sale_desc: "يُحظر بيع التطبيق أو نسخه أو حزم APK المشتقة منه بأي مقابل مالي أو جعله تطبيقاً مدفوعاً على أي متجر.",
+        rule_no_ads_title: "حظر الإعلانات والاشتراكات الربحية",
+        rule_no_ads_desc: "يُحظر دمج أي شبكات إعلانية ربحية (AdMob أو غيرها)، أو تفعيل اشتراكات مدفوعة أو مشتريات داخل التطبيق.",
+        rule_no_commercial_service_title: "حظر الخدمات التجارية المدفوعة",
+        rule_no_commercial_service_desc: "لا يجوز لأي جهة تجارية استغلال التطبيق لتقديم خدمات استشارية أو دعم مدفوع دون إذن خطي صريح.",
+        rule_allow_edu_title: "مسموح ومجاني بالكامل للأغراض التعليمية",
+        rule_allow_edu_desc: "يُسمح بحرية كاملة للطلاب، المعلمين، الجامعات، والمطورين الهواة بالاستخدام الشخصي والتعليمي غير الربحي.",
+        btn_download_license: "تحميل وثيقة الترخيص (LICENSE)",
+        license_note: "يحفظ المطورون حقوق الملاحقة القانونية عند أي خرق للشروط التجارية.",
+        tag_about: "الرؤية والمستقبل",
+        title_about: "معاً نبني مستقبل البرمجة المتنقلة",
+        subtitle_about: "صُمم تطبيق Python IDE ليكون الأداة التي يمكن لأي مبرمج وطالب الاعتماد عليها أينما كان دون الحاجة إلى حاسوب محمول ثقيل.",
+        footer_license: "مرخص للاستخدام غير التجاري فقط"
+      },
+      en: {
+        nav_features: "Features",
+        nav_demo: "Live Demo",
+        nav_license: "Strict License",
+        nav_about: "About",
+        btn_license_short: "🚫 Non-Commercial",
+        hero_badge: "Native Android Suite • Jetpack Compose",
+        hero_title: "A Full Python IDE <br><span class='gradient'>In The Palm of Your Hand</span>",
+        hero_desc: "A genuine code editor, interactive terminal, Pip package manager, Git version control, and step debugger—packaged in a lightning-fast, sleek dark interface tailored for Android.",
+        btn_explore: "Explore Features",
+        btn_view_license: "License & Terms",
+        tag_capabilities: "Pro Capabilities",
+        title_features: "Everything You Need to Code Anywhere",
+        subtitle_features: "Engineered as an authentic productivity environment far beyond standard text editors.",
+        f1_title: "Advanced Code Editor",
+        f1_desc: "Full Python syntax highlighting, line numbers gutter, undo/redo stack, find & replace, and a quick-insert mobile accessory bar.",
+        f2_title: "Interactive Terminal",
+        f2_desc: "Built-in monospace CLI for Python scripts, Pip commands, and file navigation, designed to bridge with Termux.",
+        f3_title: "Pip Package Manager",
+        f3_desc: "Browse and install popular Python libraries (Requests, NumPy, Pandas, Flask) in one tap with version tracking.",
+        f4_title: "Git Version Control",
+        f4_desc: "Inspect uncommitted files, switch branches, stage and commit changes, and prepare for remote GitHub sync.",
+        f5_title: "Variables & Debugger",
+        f5_desc: "Inspect variables, values, and memory types in real-time with breakpoint inspection and step-over execution.",
+        f6_title: "Real File System",
+        f6_desc: "Real files and directories stored directly in Android storage, allowing unrestricted export and editing.",
+        f7_title: "Chaquopy / Embedded CPython 3.12 Engine",
+        f7_desc: "Native CPython 3.12 execution on Android with high performance and support for native C-extensions.",
+        f8_title: "Direct Termux Socket Bridge",
+        f8_desc: "Direct TCP socket connector bridging into Termux Linux subsystem for system packages and terminal commands.",
+        f9_title: "Git Native JGit / Libgit2 Backend",
+        f9_desc: "Native repository management with .git initialization, unified diff inspection, branch trees, and commits.",
+        f10_title: "Jupyter Notebook (.ipynb) Mobile Viewer & Runner",
+        f10_desc: "Open, edit, execute individual code cells, and render rich Markdown in Jupyter Notebook files directly on mobile.",
+        tag_demo: "Interactive Trial",
+        title_demo: "Test the Runtime Simulator",
+        subtitle_demo: "Experience script execution and interactive standard output directly in the browser.",
+        btn_run: "▶ Run Code",
+        license_badge: "Strict Non-Commercial License • No Resale",
+        license_heading: "Prohibition on Commercialization & Resale",
+        license_summary: "This software is released exclusively as a free educational and personal development tool. You are strictly forbidden from selling this app, charging subscription fees, bundling paid ads, or monetizing it in any shape or form.",
+        rule_no_sale_title: "No Sale or Paid Distribution",
+        rule_no_sale_desc: "Selling the app, distributing paid APKs, or publishing paid clones on any marketplace is strictly prohibited.",
+        rule_no_ads_title: "No Advertisements or Subscriptions",
+        rule_no_ads_desc: "Integrating ad networks (e.g. AdMob), paid subscriptions, or in-app billing is strictly prohibited.",
+        rule_no_commercial_service_title: "No Paid Commercial Support",
+        rule_no_commercial_service_desc: "Commercial vendors may not use or offer this software as a paid service without prior explicit consent.",
+        rule_allow_edu_title: "100% Free for Students & Educators",
+        rule_allow_edu_desc: "Students, teachers, schools, researchers, and hobbyists are granted free, perpetual, non-commercial usage.",
+        btn_download_license: "Download License File (LICENSE)",
+        license_note: "Copyright holders reserve all legal remedies against commercial infringers.",
+        tag_about: "Vision & Future",
+        title_about: "Together We Build Mobile Development",
+        subtitle_about: "Python IDE was crafted to empower students and developers to code freely anywhere without carrying a heavy laptop.",
+        footer_license: "Strictly Non-Commercial License"
+      }
+    };
+
+    let currentLang = 'ar';
+
+    const langToggleBtn = document.getElementById('langToggle');
+    langToggleBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      document.body.className = currentLang === 'en' ? 'lang-en' : '';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'en' ? 'ltr' : 'rtl';
+      langToggleBtn.textContent = currentLang === 'ar' ? 'English' : 'العربية';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+          el.innerHTML = translations[currentLang][key];
+        }
+      });
+    });
+
+    // Interactive Demo Runner
+    const runBtn = document.getElementById('runBtn');
+    const demoOutput = document.getElementById('demoOutput');
+
+    runBtn.addEventListener('click', () => {
+      demoOutput.innerHTML = '<span style="color: #60A5FA;">[Running] python demo.py ...</span>';
+      setTimeout(() => {
+        demoOutput.innerHTML = `[Running] python demo.py<br>
+<span style="color: #F8FAFC;">مرحباً بك يا المبرمج العربي في عالم بايثون!</span><br>
+-> تنفيذ الخطوة البرمجية: 1<br>
+-> تنفيذ الخطوة البرمجية: 2<br>
+-> تنفيذ الخطوة البرمجية: 3<br>
+<span style="color: #38BDF8;">[Done] exited with code 0 in 11ms</span>`;
+      }, 500);
+    });
+  </script>
+</body>
+</html>
