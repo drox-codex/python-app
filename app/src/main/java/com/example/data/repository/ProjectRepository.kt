@@ -284,19 +284,14 @@ def calculate_stats(numbers):
   "nbformat_minor": 5
 }"""
             File(myProjectDir, "analysis.ipynb").writeText(notebookJson)
+        }
 
-            // Create WebApp
-            val webAppDir = File(projectsRoot, "WebApp").apply { mkdirs() }
-            File(webAppDir, "app.py").writeText("print('WebApp server running on port 5000')\n")
-            File(webAppDir, "requirements.txt").writeText("flask>=3.0.2\n")
-
-            // Create NetworkScanner
-            val netDir = File(projectsRoot, "NetworkScanner").apply { mkdirs() }
-            File(netDir, "scanner.py").writeText("print('Scanning local subnets...')\n")
-
-            // Create AI-Tools
-            val aiDir = File(projectsRoot, "AI-Tools").apply { mkdirs() }
-            File(aiDir, "pipeline.py").writeText("print('Loading machine learning model weights...')\n")
+        // Clean up any legacy dummy projects
+        listOf("WebApp", "NetworkScanner", "AI-Tools").forEach { dummyName ->
+            val dummyDir = File(projectsRoot, dummyName)
+            if (dummyDir.exists()) {
+                dummyDir.deleteRecursively()
+            }
         }
     }
 

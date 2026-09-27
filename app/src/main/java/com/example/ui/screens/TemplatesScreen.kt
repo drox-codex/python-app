@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -83,52 +84,58 @@ fun TemplatesScreen(viewModel: IdeViewModel) {
         bottomBar = { AppBottomNavBar(viewModel = viewModel, currentScreen = IdeScreen.Home) },
         containerColor = DarkBackground
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .statusBarsPadding()
+                .statusBarsPadding(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Top Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .background(DarkSurface)
-                    .padding(horizontal = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(
-                        onClick = { viewModel.navigateBack() },
-                        modifier = Modifier.testTag("templates_back_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = TextPrimary
-                        )
-                    }
-                    Text(
-                        text = viewModel.tr("templates_title"),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        color = TextPrimary
-                    )
-                }
-            }
-
-            // Templates Grid (2 Columns)
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    .widthIn(max = 840.dp)
             ) {
+                // Top Bar
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .background(DarkSurface)
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(
+                            onClick = { viewModel.navigateBack() },
+                            modifier = Modifier.testTag("templates_back_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = TextPrimary
+                            )
+                        }
+                        Text(
+                            text = viewModel.tr("templates_title"),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = TextPrimary
+                        )
+                    }
+                }
+
+                // Templates Grid (Adaptive across all screen sizes)
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 150.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
                 items(DefaultTemplates.list, key = { it.id }) { template ->
                     val (icon, color) = when (template.iconName) {
                         "web" -> Icons.Filled.Language to SecondaryAccent
@@ -154,6 +161,7 @@ fun TemplatesScreen(viewModel: IdeViewModel) {
             }
         }
     }
+}
 
     // Create Project from Template Dialog
     selectedTemplate?.let { tpl ->
@@ -192,7 +200,10 @@ fun TemplatesScreen(viewModel: IdeViewModel) {
                             viewModel.navigateTo(IdeScreen.Explorer)
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryAccent,
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text(viewModel.tr("create_project"))
                 }

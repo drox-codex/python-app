@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -108,13 +109,19 @@ fun HomeScreen(viewModel: IdeViewModel) {
         bottomBar = { AppBottomNavBar(viewModel = viewModel, currentScreen = IdeScreen.Home) },
         containerColor = DarkBackground
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .statusBarsPadding()
+                .statusBarsPadding(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Top App Bar
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 840.dp)
+            ) {
+                // Top App Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -242,7 +249,7 @@ fun HomeScreen(viewModel: IdeViewModel) {
                             shape = RoundedCornerShape(20.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = PrimaryAccent,
-                                contentColor = Color.White
+                                contentColor = Color.Black
                             ),
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 0.dp)
                         ) {
@@ -344,6 +351,7 @@ fun HomeScreen(viewModel: IdeViewModel) {
             }
         }
     }
+}
 
     // New Project Dialog
     if (showNewProjectDialog) {
@@ -378,7 +386,10 @@ fun HomeScreen(viewModel: IdeViewModel) {
                             viewModel.navigateTo(IdeScreen.Explorer)
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryAccent,
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text("Create")
                 }
@@ -420,7 +431,10 @@ fun HomeScreen(viewModel: IdeViewModel) {
                             projectToRename = null
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryAccent,
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text("Rename")
                 }
@@ -446,10 +460,10 @@ fun ProjectCard(
     var showMenu by remember { mutableStateOf(false) }
 
     val (icon, iconBg) = when (project.projectType) {
-        ProjectType.WEB_APP -> Icons.Filled.Public to Color(0xFF1E3A8A)
-        ProjectType.NETWORK -> Icons.Filled.Terminal to Color(0xFF065F46)
-        ProjectType.AI_TOOLS -> Icons.Filled.Psychology to Color(0xFF581C87)
-        else -> Icons.Filled.Folder to Color(0xFF1E293B)
+        ProjectType.WEB_APP -> Icons.Filled.Public to Color(0xFF27272A)
+        ProjectType.NETWORK -> Icons.Filled.Terminal to Color(0xFF27272A)
+        ProjectType.AI_TOOLS -> Icons.Filled.Psychology to Color(0xFF27272A)
+        else -> Icons.Filled.Folder to Color(0xFF27272A)
     }
 
     Row(

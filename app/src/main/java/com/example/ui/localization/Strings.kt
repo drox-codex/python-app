@@ -159,6 +159,7 @@ object LocalizedStrings {
         "feat_git" to "إدارة الإصدارات والتحكم (Git)",
         "feat_debugger" to "مصحح الأخطاء وفحص المتغيرات",
         "feat_more" to "قوالب مشاريع وتكامل Termux والمزيد...",
+        "btn_license_portal" to "وثيقة الترخيص وبوابة الويب الرسمية",
         "build_future" to "معاً نبني مستقبل أفضل"
     )
 
@@ -308,6 +309,7 @@ object LocalizedStrings {
         "feat_git" to "Version control & GitHub integration",
         "feat_debugger" to "Interactive debugger & variable inspector",
         "feat_more" to "Project templates, Termux bridge, and more...",
+        "btn_license_portal" to "License Terms & Official Web Portal",
         "build_future" to "Together We Build The Future"
     )
 }

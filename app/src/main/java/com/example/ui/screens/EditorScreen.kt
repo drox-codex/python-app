@@ -287,7 +287,10 @@ fun EditorScreen(viewModel: IdeViewModel) {
                                     viewModel.updateEditorCode(newText)
                                 }
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = PrimaryAccent,
+                                contentColor = Color.Black
+                            ),
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(viewModel.tr("replace_all"), fontSize = 12.sp)

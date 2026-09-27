@@ -120,7 +120,7 @@ fun WelcomeScreen(viewModel: IdeViewModel) {
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrimaryAccent,
-                    contentColor = androidx.compose.ui.graphics.Color.White
+                    contentColor = androidx.compose.ui.graphics.Color.Black
                 )
             ) {
                 Text(

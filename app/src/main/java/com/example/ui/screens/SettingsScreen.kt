@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -92,13 +93,19 @@ fun SettingsScreen(viewModel: IdeViewModel) {
         bottomBar = { AppBottomNavBar(viewModel = viewModel, currentScreen = IdeScreen.Settings) },
         containerColor = DarkBackground
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .statusBarsPadding()
+                .statusBarsPadding(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Top Bar
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 840.dp)
+            ) {
+                // Top Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -251,7 +258,7 @@ fun SettingsScreen(viewModel: IdeViewModel) {
                                     checked = settings.showLineNumbers,
                                     onCheckedChange = { viewModel.setLineNumbers(it) },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color.White,
+                                        checkedThumbColor = Color.Black,
                                         checkedTrackColor = PrimaryAccent
                                     )
                                 )
@@ -268,7 +275,7 @@ fun SettingsScreen(viewModel: IdeViewModel) {
                                     checked = settings.autoSave,
                                     onCheckedChange = { viewModel.setAutoSave(it) },
                                     colors = SwitchDefaults.colors(
-                                        checkedThumbColor = Color.White,
+                                        checkedThumbColor = Color.Black,
                                         checkedTrackColor = PrimaryAccent
                                     )
                                 )
@@ -313,6 +320,7 @@ fun SettingsScreen(viewModel: IdeViewModel) {
             }
         }
     }
+}
 
     // Language Toggle Dialog
     if (showLanguageDialog) {

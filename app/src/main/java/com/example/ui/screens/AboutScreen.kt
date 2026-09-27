@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,17 +22,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +57,8 @@ fun AboutScreen(viewModel: IdeViewModel) {
     BackHandler {
         viewModel.navigateBack()
     }
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -79,7 +86,7 @@ fun AboutScreen(viewModel: IdeViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 40.dp, bottom = 80.dp),
+                .padding(top = 40.dp, bottom = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -131,25 +138,58 @@ fun AboutScreen(viewModel: IdeViewModel) {
             }
         }
 
-        // Action Button
-        Button(
-            onClick = { viewModel.navigateTo(IdeScreen.Home) },
+        // Bottom Action Buttons
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
-                .align(Alignment.BottomCenter)
-                .testTag("about_future_button"),
-            shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PrimaryAccent,
-                contentColor = Color.White
-            )
+                .align(Alignment.BottomCenter),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "🚀 " + viewModel.tr("build_future"),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
+            OutlinedButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://drox-codex.github.io/python-app/#license"))
+                    context.startActivity(intent)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp)
+                    .testTag("about_license_web_button"),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.outlinedButtonColors(
+                    contentColor = PrimaryAccent
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.OpenInBrowser,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "⚖️ " + viewModel.tr("btn_license_portal"),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+
+            Button(
+                onClick = { viewModel.navigateTo(IdeScreen.Home) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .testTag("about_future_button"),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryAccent,
+                    contentColor = Color.Black
+                )
+            ) {
+                Text(
+                    text = "🚀 " + viewModel.tr("build_future"),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

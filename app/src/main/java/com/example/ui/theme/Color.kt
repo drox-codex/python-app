@@ -2,46 +2,49 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Dark Developer Theme Palette
-val DarkBackground = Color(0xFF0B0F19)
-val DarkSurface = Color(0xFF111827)
-val DarkSurfaceVariant = Color(0xFF1A2338)
-val DarkSurfaceElevated = Color(0xFF222F4A)
-val DarkBorder = Color(0xFF1E293B)
-val DarkBorderHighlight = Color(0xFF2D3E60)
+// Modern Monochrome Palette (Black, Gray, White)
+val DarkBackground = Color(0xFF09090B)       // Pure Deep Black
+val DarkSurface = Color(0xFF121215)          // Charcoal Black Surface
+val DarkSurfaceVariant = Color(0xFF18181B)   // Neutral Zinc Surface
+val DarkSurfaceElevated = Color(0xFF222226)  // Slate/Zinc Elevated Gray
+val DarkBorder = Color(0xFF27272A)           // Fine Gray Border
+val DarkBorderHighlight = Color(0xFF3F3F46)  // Active/Hover Light Gray Border
 
-// Accent Colors
-val PythonBlue = Color(0xFF387EB8)
-val PythonYellow = Color(0xFFFFD43B)
-val PrimaryAccent = Color(0xFF3B82F6)
-val PrimaryContainer = Color(0xFF1E3A8A)
-val SecondaryAccent = Color(0xFF38BDF8)
+// Primary Colors: White & High-End Neutral Grays
+val PrimaryAccent = Color(0xFFFFFFFF)        // Crisp White as Primary Color
+val PrimaryContainer = Color(0xFF27272A)     // Dark Zinc Gray Container
+val SecondaryAccent = Color(0xFFE4E4E7)      // Platinum / Off-White
 
-// Status & Action Colors
-val RunGreen = Color(0xFF10B981)
-val RunGreenDark = Color(0xFF064E3B)
+// Status & Action Colors (Subtle & Crisp)
+val RunGreen = Color(0xFF22C55E)
+val RunGreenDark = Color(0xFF14532D)
 val DebugPurple = Color(0xFFA855F7)
 val DebugPurpleDark = Color(0xFF581C87)
 val ErrorRed = Color(0xFFEF4444)
 val WarningOrange = Color(0xFFF59E0B)
 
+// Python Brand Accents (Subtle)
+val PythonBlue = Color(0xFF60A5FA)
+val PythonYellow = Color(0xFFFDE047)
+
 // Terminal & Editor Specific
-val TerminalBackground = Color(0xFF070A12)
-val TerminalText = Color(0xFF4ADE80)
-val EditorGutterBackground = Color(0xFF0E1424)
-val EditorGutterText = Color(0xFF475569)
+val TerminalBackground = Color(0xFF09090B)
+val TerminalText = Color(0xFFE4E4E7)
+val EditorGutterBackground = Color(0xFF0D0D10)
+val EditorGutterText = Color(0xFF52525B)
 
-// Typography Colors
-val TextPrimary = Color(0xFFF8FAFC)
-val TextSecondary = Color(0xFF94A3B8)
-val TextMuted = Color(0xFF64748B)
+// Typography Colors (High Contrast Black/Gray/White)
+val TextPrimary = Color(0xFFFFFFFF)          // Pure White
+val TextSecondary = Color(0xFFA1A1AA)        // Light Neutral Gray
+val TextMuted = Color(0xFF71717A)            // Mid Gray
 
-// Python Syntax Highlighting Colors
-val SyntaxKeyword = Color(0xFFFF79C6)    // def, for, in, if, else, import, class
-val SyntaxBuiltin = Color(0xFF8BE9FD)    // print, range, len, input, int, str
-val SyntaxString = Color(0xFFF1FA8C)     // "string", 'text'
-val SyntaxComment = Color(0xFF6272A4)    // # comment
-val SyntaxNumber = Color(0xFFBD93F9)     // 123, 0.5
-val SyntaxFunction = Color(0xFF50FA7B)   // function_name
-val SyntaxOperator = Color(0xFFFF79C6)   // =, +, -, *, /
-val SyntaxIdentifier = Color(0xFFF8F8F2) // variable names
+// Python Syntax Highlighting (Modern VS Code Dark+ style)
+val SyntaxKeyword = Color(0xFFF472B6)        // def, for, in, if, else, import, class
+val SyntaxBuiltin = Color(0xFF67E8F9)        // print, range, len, input, int, str
+val SyntaxString = Color(0xFFFDE047)         // "string", 'text'
+val SyntaxComment = Color(0xFF71717A)        // # comment
+val SyntaxNumber = Color(0xFFC084FC)         // 123, 0.5
+val SyntaxFunction = Color(0xFF4ADE80)       // function_name
+val SyntaxOperator = Color(0xFFE4E4E7)       // =, +, -, *, /
+val SyntaxIdentifier = Color(0xFFF4F4F5)     // variable names
+

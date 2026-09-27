@@ -7,13 +7,13 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryAccent,
-    onPrimary = Color.White,
+    onPrimary = Color.Black,
     primaryContainer = PrimaryContainer,
-    onPrimaryContainer = Color(0xFFDBEAFE),
+    onPrimaryContainer = Color.White,
     secondary = SecondaryAccent,
     onSecondary = Color.Black,
     secondaryContainer = DarkSurfaceElevated,
-    onSecondaryContainer = Color(0xFFBAE6FD),
+    onSecondaryContainer = Color.White,
     tertiary = PythonYellow,
     onTertiary = Color.Black,
     background = DarkBackground,

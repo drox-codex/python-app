@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -92,13 +93,19 @@ fun PackagesScreen(viewModel: IdeViewModel) {
         bottomBar = { AppBottomNavBar(viewModel = viewModel, currentScreen = IdeScreen.Packages) },
         containerColor = DarkBackground
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .statusBarsPadding()
+                .statusBarsPadding(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Top Bar
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 840.dp)
+            ) {
+                // Top Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -196,6 +203,7 @@ fun PackagesScreen(viewModel: IdeViewModel) {
         }
     }
 }
+}
 
 @Composable
 fun PackageFilterPill(
@@ -216,7 +224,7 @@ fun PackageFilterPill(
     ) {
         Text(
             text = label,
-            color = if (isSelected) Color.White else TextSecondary,
+            color = if (isSelected) Color.Black else TextSecondary,
             fontSize = 13.sp,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
         )
@@ -291,7 +299,7 @@ fun PackageCardItem(
             onClick = onToggle,
             colors = ButtonDefaults.buttonColors(
                 containerColor = if (pkg.isInstalled) RunGreen.copy(alpha = 0.2f) else PrimaryAccent,
-                contentColor = if (pkg.isInstalled) RunGreen else Color.White
+                contentColor = if (pkg.isInstalled) RunGreen else Color.Black
             ),
             shape = RoundedCornerShape(10.dp),
             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),

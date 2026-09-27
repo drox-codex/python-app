@@ -5,10 +5,13 @@
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-2024.09.00-4285F4.svg?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
 [![Material 3](https://img.shields.io/badge/Material%203-Enabled-7C3AED.svg)](https://m3.material.io)
 [![API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?logo=android)](https://android.com)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Web Showcase](https://img.shields.io/badge/Website-GitHub%20Pages-3B82F6.svg?logo=github)](https://drox-codex.github.io/python-app/)
+[![License](https://img.shields.io/badge/License-Strict%20Non--Commercial-red.svg)](https://drox-codex.github.io/python-app/#license)
 
 > **بيئة تطوير بايثون كاملة واحترافية على هاتفك الأندرويد**  
-> **A serious mobile-first Python development environment inspired by modern professional IDEs, optimized specifically for Android.**
+> **A serious mobile-first Python development environment inspired by modern professional IDEs, optimized specifically for Android.**  
+> 🌐 **Official Web Portal & Interactive Showcase:** [https://drox-codex.github.io/python-app/](https://drox-codex.github.io/python-app/)  
+> ⚖️ **License & Terms:** [https://drox-codex.github.io/python-app/#license](https://drox-codex.github.io/python-app/#license)
 
 ---
 
@@ -166,14 +169,19 @@ The repository includes a GitHub Actions workflow located at `.github/workflows/
 
 ## 📄 License & Non-Commercial Terms / الترخيص وشروط الاستخدام غير التجاري
 
-This project is licensed under a **Strict Non-Commercial License** - see the full [LICENSE](LICENSE) file and our [Web Showcase & License Portal](index.html).
+This project is licensed under a **Strict Non-Commercial License**.
+
+* 🌐 **Live Web Showcase & License Portal:** [https://drox-codex.github.io/python-app/#license](https://drox-codex.github.io/python-app/#license)
+* 📄 **Repository License File:** [LICENSE](LICENSE)
 
 ### 🇸🇦 تنبيه هام بشأن الاستخدام والترخيص
+* **رابط الترخيص الرسمي على الويب:** [https://drox-codex.github.io/python-app/#license](https://drox-codex.github.io/python-app/#license)
 * **يُمنع منعاً باتاً استغلال هذا التطبيق تجارياً أو بيعه أو إعادة نشره كمنتج مدفوع بأي شكل من الأشكال.**
 * **يُمنع فرض رسوم اشتراك، شراء داخل التطبيق، أو دمج إعلانات ربحية.**
 * **التطبيق متاح ومجاني 100% للأغراض التعليمية، البحثية، والتعلم الشخصي فقط.**
 
 ### 🇬🇧 Non-Commercial Notice
+* **Official Web License Page:** [https://drox-codex.github.io/python-app/#license](https://drox-codex.github.io/python-app/#license)
 * **STRICTLY PROHIBITED:** Selling, leasing, sublicensing, or distributing this software for profit, fee, or paid subscription.
 * **STRICTLY PROHIBITED:** Bundling monetized ads or publishing paid derivative apps on marketplaces.
 * **PERMITTED:** Free personal, academic, and non-commercial educational use.

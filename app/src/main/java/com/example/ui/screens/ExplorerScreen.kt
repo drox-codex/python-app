@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -115,7 +116,7 @@ fun ExplorerScreen(viewModel: IdeViewModel) {
                     showCreateDialog = true
                 },
                 containerColor = PrimaryAccent,
-                contentColor = Color.White,
+                contentColor = Color.Black,
                 shape = CircleShape,
                 modifier = Modifier.testTag("fab_add_file_or_folder")
             ) {
@@ -124,13 +125,19 @@ fun ExplorerScreen(viewModel: IdeViewModel) {
         },
         containerColor = DarkBackground
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .statusBarsPadding()
+                .statusBarsPadding(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Top Bar
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 840.dp)
+            ) {
+                // Top Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -302,6 +309,7 @@ fun ExplorerScreen(viewModel: IdeViewModel) {
             }
         }
     }
+}
 
     // Create File / Folder Dialog
     if (showCreateDialog) {
@@ -343,7 +351,10 @@ fun ExplorerScreen(viewModel: IdeViewModel) {
                             showCreateDialog = false
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryAccent,
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text("Create")
                 }
@@ -383,7 +394,10 @@ fun ExplorerScreen(viewModel: IdeViewModel) {
                             itemToRename = null
                         }
                     },
-                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryAccent)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryAccent,
+                        contentColor = Color.Black
+                    )
                 ) {
                     Text("Save")
                 }
